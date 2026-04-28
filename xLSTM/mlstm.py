@@ -50,28 +50,11 @@ class mLSTM(nn.Module):
         Returns:
             tuple: Output sequence and final hidden state.
         """
-        batch_size, seq_length, _ = input_seq.size()
-        
-        if hidden_state is None:
-            hidden_state = self.init_hidden(batch_size)
-        
-        outputs = []
-        for t in range(seq_length):
-            x = input_seq[:, t, :]
-            for layer_idx, layer in enumerate(self.layers):
-                h, C = hidden_state[layer_idx]
-                h, C = layer(x, (h, C))
-                hidden_state[layer_idx] = (h, C)
-                x = self.dropout_layer(h) if layer_idx < self.num_layers - 1 else h
-            outputs.append(x)
-        
-        return torch.stack(outputs, dim=1), hidden_state
+        pass
 
     def init_hidden(self, batch_size):
         """Initialize hidden state for all layers."""
-        return [(torch.zeros(batch_size, self.hidden_size, device=self.layers[0].weight_ih.device),
-                 torch.zeros(batch_size, self.hidden_size, self.hidden_size, device=self.layers[0].weight_ih.device))
-                for _ in range(self.num_layers)]
+        pass
 
 class mLSTMCell(nn.Module):
     """
@@ -101,15 +84,7 @@ class mLSTMCell(nn.Module):
 
     def reset_parameters(self):
         """Initialize parameters using Xavier uniform initialization."""
-        nn.init.xavier_uniform_(self.weight_ih)
-        nn.init.xavier_uniform_(self.weight_hh)
-        nn.init.zeros_(self.bias)
-        nn.init.xavier_uniform_(self.W_q.weight)
-        nn.init.xavier_uniform_(self.W_k.weight)
-        nn.init.xavier_uniform_(self.W_v.weight)
-        nn.init.zeros_(self.W_q.bias)
-        nn.init.zeros_(self.W_k.bias)
-        nn.init.zeros_(self.W_v.bias)
+        pass
 
     def forward(self, input, hx):
         """
@@ -122,20 +97,4 @@ class mLSTMCell(nn.Module):
         Returns:
             tuple: New hidden state and cell state.
         """
-        h, C = hx
-        gates = F.linear(input, self.weight_ih, self.bias) + F.linear(h, self.weight_hh)
-        
-        i, f, o = gates.chunk(3, 1)
-        
-        i = torch.exp(i)  # Exponential input gate
-        f = torch.exp(f)  # Exponential forget gate
-        o = torch.sigmoid(o)
-        
-        q = self.W_q(input)
-        k = self.W_k(input)
-        v = self.W_v(input)
-        
-        C = f.unsqueeze(2) * C + i.unsqueeze(2) * torch.bmm(v.unsqueeze(2), k.unsqueeze(1))
-        h = o * torch.bmm(q.unsqueeze(1), C).squeeze(1)
-        
-        return h, C
+        pass

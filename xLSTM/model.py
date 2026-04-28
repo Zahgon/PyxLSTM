@@ -60,14 +60,4 @@ class xLSTM(nn.Module):
         Returns:
             tuple: Output logits and final hidden states.
         """
-        embedded_seq = self.embedding(input_seq)
-        
-        if hidden_states is None:
-            hidden_states = [None] * self.num_blocks
-        
-        output_seq = embedded_seq
-        for i, block in enumerate(self.blocks):
-            output_seq, hidden_states[i] = block(output_seq, hidden_states[i])
-        
-        output_seq = self.output_layer(output_seq)
-        return output_seq, hidden_states
+        pass
